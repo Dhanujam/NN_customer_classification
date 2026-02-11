@@ -14,68 +14,138 @@ You are required to help the manager to predict the right group of the new custo
 
 ## Neural Network Model
 
-Include the neural network model diagram.
+
 
 ## DESIGN STEPS
 
 ### STEP 1:
-Write your own steps
+Load the dataset, clean it by handling missing values, drop irrelevant columns, encode categorical variables, and normalize features.
 
 ### STEP 2:
+Split the data into training and testing sets.
 
 ### STEP 3:
+Build a neural network model with multiple layers using PyTorch.
 
+### STEP 4:
+Train the model using CrossEntropyLoss and Adam optimizer.
 
+### STEP 5:
+Evaluate the model with accuracy, confusion matrix, and classification report.
+
+### STEP 6:
+Test the model with new sample data for prediction.
 ## PROGRAM
 
-### Name: 
-### Register Number:
+### Name: DHANUJA M
+### Register Number:212224230057
 
-```python
+```
 class PeopleClassifier(nn.Module):
     def __init__(self, input_size):
         super(PeopleClassifier, self).__init__()
-        #Include your code here
+        self.fc1 = nn.Linear(input_size, 32)
+        self.fc2 = nn.Linear(32, 16)
+        self.fc3 = nn.Linear(16, 8)
+        self.fc4 = nn.Linear(8, 4)
 
 
 
     def forward(self, x):
-        #Include your code here
-        
-
+         x=F.relu(self.fc1(x))
+        x=F.relu(self.fc2(x))
+        x=F.relu(self.fc3(x))
+        x=self.fc4(x)
+        return x
 ```
-```python
+```
 # Initialize the Model, Loss Function, and Optimizer
-
+model = PeopleClassifier(input_size=X_train.shape[1])
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(),lr=0.01)
 
 ```
-```python
+```
 def train_model(model, train_loader, criterion, optimizer, epochs):
-    #Include your code here
+     for epoch in range(epochs):
+    model.train()
+    for X_batch,y_batch in train_loader:
+      optimizer.zero_grad()
+      outputs=model(X_batch)
+      loss=criterion(outputs,y_batch)
+      loss.backward()
+      optimizer.step()
+
+  if(epoch+1)%10==0:
+    print(f'Epoch [{epoch+1}/{epochs}],Loss:{loss.item():.4f}')
+
+# Evaluation
+model.eval()
+predictions, actuals = [], []
+with torch.no_grad():
+    for X_batch, y_batch in test_loader:
+        outputs = model(X_batch)
+        _, predicted = torch.max(outputs, 1)
+        predictions.extend(predicted.numpy())
+        actuals.extend(y_batch.numpy())
+
+# Compute metrics
+accuracy = accuracy_score(actuals, predictions)
+conf_matrix = confusion_matrix(actuals, predictions)
+class_report = classification_report(actuals, predictions, target_names=[str(i) for i in label_encoder.classes_])
+print("Name: DHANUJA M")
+print("Register No: 212224230057")     
+print(f'Test Accuracy: {accuracy:.2f}%')
+print("Confusion Matrix:\n", conf_matrix)
+print("Classification Report:\n", class_report)
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.heatmap(conf_matrix, annot=True, cmap='Blues', xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_,fmt='g')
+plt.xlabel("Predicted Labels")
+plt.ylabel("True Labels")
+plt.title("Confusion Matrix")
+plt.show()
+
+# Prediction for a sample input
+sample_input = X_test[12].clone().unsqueeze(0).detach().type(torch.float32)
+with torch.no_grad():
+    output = model(sample_input)
+    # Select the prediction for the sample (first element)
+    predicted_class_index = torch.argmax(output[0]).item()
+    predicted_class_label = label_encoder.inverse_transform([predicted_class_index])[0]
+print("Name: DHANUJA M")    
+print("Register No: 212224230057")
+print(f'Predicted class for sample input: {predicted_class_label}')
+print(f'Actual class for sample input: {label_encoder.inverse_transform([y_test[12].item()])[0]}')
+
 ```
 
 
 
 ## Dataset Information
 
-Include screenshot of the dataset
+<img width="1247" height="255" alt="image" src="https://github.com/user-attachments/assets/3af3e3d8-646c-4fdf-a98f-ef6aa9e5b797" />
+
 
 ## OUTPUT
 
-
+<img width="777" height="578" alt="image" src="https://github.com/user-attachments/assets/992b9db4-1c86-4b4e-8bd9-733ab23fbbe2" />
 
 ### Confusion Matrix
 
-Include confusion matrix here
+<img width="261" height="182" alt="image" src="https://github.com/user-attachments/assets/0fa909e3-34e6-4ef2-9517-d6ba4680f23f" />
 
 ### Classification Report
 
-Include Classification Report here
+<img width="557" height="262" alt="image" src="https://github.com/user-attachments/assets/b08668ff-2c9b-449c-a377-bf29aeccb5e1" />
 
 
 ### New Sample Data Prediction
 
-Include your sample input and output here
+<img width="432" height="105" alt="image" src="https://github.com/user-attachments/assets/43b5f7e8-cadb-4e80-ba16-26508cc7b82c" />
+
 
 ## RESULT
-Include your result here
+
+The program to develop a neural network regression model for the given dataset has been successfully executed.
